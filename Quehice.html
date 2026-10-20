@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>PIXEL_AUDIT v2.0</title>
+  
+  <!-- Manifest PWA Embebido para instalación directa en Chrome/Android/GitHub Pages -->
+  <link rel="manifest" href='data:application/manifest+json,{"name":"PIXEL_AUDIT","short_name":"Audit","start_url":".","display":"standalone","background_color":"#00F0FF","theme_color":"#FFDE59","icons":[{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
+  
+  <!-- Tipografías Retro Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #00F0FF;
+      --card-bg: #FFFFFF;
+      --border: 3px solid #000000;
+      --shadow: 4px 4px 0px #000000;
+      --shadow-pressed: 1px 1px 0px #000000;
+      
+      --yellow: #FFDE59;
+      --pink: #FF007F;
+      --green: #00E676;
+      --cyan: #00F0FF;
+      --purple: #B55FE6;
+      --orange: #FF914D;
+      --gray: #E0E0E0;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: radial-gradient(#000000 10%, transparent 11%);
+      background-size: 12px 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      color: #000;
+      padding: 10px;
+      padding-bottom: 30px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    header {
+      background: var(--yellow);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 12px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 15px;
+      line-height: 1.3;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      min-width: 80px;
+      padding: 10px 6px;
+      background: var(--card-bg);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      font-family: 'Press Start 2P', cursive;
+      font-size: 8px;
+      text-align: center;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: var(--pink);
+      color: #FFF;
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px #000;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .badge-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #000;
+      color: #FFF;
+      padding: 8px 10px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      width: 100%;
+      min-height: 50px;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 900;
+      font-size: 15px;
+      padding: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.05s, box-shadow 0.05s;
+    }
+
+    .btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: var(--shadow-pressed);
+    }
+
+    .btn-green { background: var(--green); }
+    .btn-yellow { background: var(--yellow); }
+    .btn-pink { background: var(--pink); color: #FFF; }
+    .btn-cyan { background: var(--cyan); }
+    .btn-purple { background: var(--purple); color: #FFF; }
+    .btn-gray { background: var(--gray); }
+
+    .grid-punch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .grid-punch .btn {
+      flex-direction: column;
+      height: 80px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .grid-punch .btn span {
+      font-size: 24px;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 46px;
+      border: var(--border);
+      padding: 8px 12px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      background: #FFF;
+      margin-bottom: 10px;
+      outline: none;
+    }
+
+    .retro-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .retro-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 2px solid #000;
+      background: #FFF;
+      cursor: pointer;
+    }
+
+    .retro-item.selected {
+      background: #FFE57F;
+      border-width: 3px;
+    }
+
+    .retro-item input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      min-height: 24px;
+      margin: 0;
+      accent-color: #000;
+    }
+
+    .filter-bar {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .filter-bar .btn {
+      min-height: 38px;
+      font-size: 11px;
+      padding: 4px;
+    }
+
+    .cpu-bar-container {
+      border: var(--border);
+      background: #000;
+      padding: 4px;
+      height: 32px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 3px;
+    }
+
+    .cpu-segment {
+      flex: 1;
+      height: 100%;
+      background: #222;
+    }
+
+    .cpu-segment.active-focus { background: var(--green); }
+    .cpu-segment.active-waste { background: var(--pink); }
+
+    .history-log {
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+
+    .log-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px dashed #888;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 2px solid #000;
+      font-weight: 700;
+    }
+
+    .toggle-row input[type="checkbox"] {
+      width: 24px;
+      height: 24px;
+      min-height: 24px;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>⏱️ PIXEL_AUDIT v2.0</h1>
+  </header>
+
+  <div class="nav-tabs">
+    <div class="tab-btn active" onclick="switchTab('punch')">EN VIVO</div>
+    <div class="tab-btn" onclick="switchTab('batch')">OLVIDOS</div>
+    <div class="tab-btn" onclick="switchTab('stats')">MÉTRICAS</div>
+    <div class="tab-btn" onclick="switchTab('config')">CONFIG</div>
+  </div>
+
+  <!-- PESTAÑA 1: REGISTRO EN VIVO -->
+  <div id="tab-punch" class="tab-content active">
+    <div class="badge-bar">
+      <span>ESTADO ACTUAL</span>
+      <span id="current-interval-label">ALARMA: 30 MIN</span>
+    </div>
+
+    <div class="card" style="background: var(--yellow);">
+      <div style="font-size: 12px; font-weight: 900; margin-bottom: 4px;">ÚLTIMA ACTIVIDAD REGISTRADA:</div>
+      <div id="last-logged-text" style="font-size: 16px; font-weight: 900;">Cargando...</div>
+    </div>
+
+    <div class="card">
+      <label style="font-weight: 900; font-size: 13px; display: block; margin-bottom: 6px;">NOTA / DETALLE RÁPIDO:</label>
+      <input type="text" id="quick-note" placeholder="Ej: Trabajo en informe, redes..." maxLength="30">
+
+      <div style="font-weight: 900; font-size: 13px; margin-top: 6px; margin-bottom: 6px;">¿QUÉ ESTÁS HACIENDO? (1 TOQUE):</div>
+      <div class="grid-punch">
+        <button class="btn btn-green" onclick="punchCategory('Enfoque Profundo')">
+          <span>🧠</span> ENFOQUE
+        </button>
+        <button class="btn btn-yellow" onclick="punchCategory('Mantenimiento')">
+          <span>🧹</span> LOGÍSTICA
+        </button>
+        <button class="btn btn-cyan" onclick="punchCategory('Ocio Consciente')">
+          <span>🎮</span> OCIO
+        </button>
+        <button class="btn btn-pink" onclick="punchCategory('Fuga de Tiempo')">
+          <span>🔥</span> FUGA
+        </button>
+        <button class="btn btn-purple" style="grid-column: span 2; height: 60px;" onclick="punchCategory('Sueño')">
+          <span style="font-size: 18px;">🛌 SUEÑO / DESCANSO</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 2: COMPLETAR OLVIDOS (RETROACTIVO) -->
+  <div id="tab-batch" class="tab-content">
+    <div class="badge-bar">
+      <span>TIEMPO NO REGISTRADO</span>
+      <span id="pending-count-badge">0 BLOQUES</span>
+    </div>
+
+    <div class="card">
+      <div style="font-size: 12px; font-weight: 700; margin-bottom: 8px;">SELECCIÓN RÁPIDA DE BLOQUES:</div>
+      <div class="filter-bar">
+        <button class="btn btn-gray" onclick="filterBatch('all')">TODOS</button>
+        <button class="btn btn-gray" onclick="filterBatch('none')">DESMARCAR</button>
+        <button class="btn btn-yellow" onclick="filterBatch('morning')">🌅 MAÑANA (6-13)</button>
+        <button class="btn btn-orange" onclick="filterBatch('afternoon')">🌆 TARDE (13-20)</button>
+        <button class="btn btn-purple" style="grid-column: span 2;" onclick="filterBatch('sleep')">🛌 NOCHE / SUEÑO (23-7)</button>
+      </div>
+
+      <div id="batch-list" class="retro-list">
+        <!-- Lista de bloques pasados -->
+      </div>
+    </div>
+
+    <div class="card" style="background: var(--cyan);">
+      <label style="font-weight: 900; font-size: 12px;">ASIGNAR ACTIVIDAD A LOS SELECCIONADOS:</label>
+      <select id="batch-category">
+        <option value="Enfoque Profundo">🧠 Enfoque Profundo</option>
+        <option value="Mantenimiento">🧹 Mantenimiento / Rutina</option>
+        <option value="Ocio Consciente">🎮 Ocio Consciente</option>
+        <option value="Fuga de Tiempo">🔥 Fuga de Tiempo</option>
+        <option value="Sueño">🛌 Sueño / Descanso</option>
+      </select>
+      <input type="text" id="batch-note" placeholder="Nota opcional para estos bloques">
+      <button class="btn btn-green" onclick="saveBatchLogs()">GUARDAR BLOQUES SELECCIONADOS</button>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 3: MÉTRICAS -->
+  <div id="tab-stats" class="tab-content">
+    <div class="badge-bar">
+      <span>RENDIMIENTO DEL DÍA</span>
+      <span id="stats-date-badge">HOY</span>
+    </div>
+
+    <div class="card">
+      <div style="font-weight: 900; font-size: 12px;">RATIO ENFOQUE VS FUGA:</div>
+      <div class="cpu-bar-container" id="cpu-bar-display">
+        <!-- Gráfico estilo CPU -->
+      </div>
+      <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 13px;">
+        <span style="color: green;" id="ratio-focus-text">ENFOQUE: 0%</span>
+        <span style="color: red;" id="ratio-waste-text">FUGA: 0%</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight: 900; font-size: 13px; margin-bottom: 8px;">RESUMEN DE HORAS:</div>
+      <div id="summary-hours-list" style="font-size: 13px; line-height: 1.6;">
+        <!-- Horas acumuladas -->
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight: 900; font-size: 13px; margin-bottom: 8px;">HISTORIAL RECIENTE:</div>
+      <div class="history-log" id="history-log-container">
+        <!-- Filas del historial -->
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 4: CONFIGURACIÓN -->
+  <div id="tab-config" class="tab-content">
+    <div class="card">
+      <div style="font-weight: 900; font-size: 14px; margin-bottom: 10px;">FRECUENCIA DE AVISOS</div>
+      <select id="config-interval-select" onchange="updateIntervalSetting()">
+        <option value="15">Cada 15 minutos</option>
+        <option value="30">Cada 30 minutos</option>
+        <option value="60">Cada 1 hora</option>
+        <option value="120">Cada 2 horas</option>
+        <option value="360">Cada 6 horas</option>
+        <option value="720">Cada 12 horas</option>
+        <option value="1440">Cada 24 horas</option>
+      </select>
+
+      <div class="toggle-row">
+        <span>🌙 Silenciar Noche (23h - 07h)</span>
+        <input type="checkbox" id="night-mute-toggle" onchange="toggleNightMute()">
+      </div>
+
+      <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn btn-cyan" onclick="requestNotificationPerms()">🔔 PERMITIR NOTIFICACIONES</button>
+        <button class="btn btn-yellow" onclick="playChiptuneAlarm()">🔊 PROBAR ALARMA 8-BIT</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight: 900; font-size: 14px; margin-bottom: 10px;">DATOS Y RESPALDOS</div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn btn-green" onclick="exportDataCSV()">📥 EXPORTAR A CSV</button>
+        <button class="btn btn-purple" onclick="exportDataJSON()">💾 RESPALDAR EN JSON</button>
+        <button class="btn btn-pink" onclick="clearAllData()">⚠️ BORRAR HISTORIAL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ESTADO DE LA APLICACIÓN
+  let logs = JSON.parse(localStorage.getItem('pixel_audit_logs') || '[]');
+  let intervalMinutes = parseInt(localStorage.getItem('pixel_audit_interval') || '30');
+  let nightMute = localStorage.getItem('pixel_audit_night_mute') === 'true';
+  let lastCheckTimestamp = parseInt(localStorage.getItem('pixel_audit_last_check') || Date.now());
+
+  // INICIALIZACIÓN
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('config-interval-select').value = intervalMinutes;
+    document.getElementById('night-mute-toggle').checked = nightMute;
+    updateUI();
+    setInterval(checkTimerLoop, 10000); // Revisa el temporizador cada 10s
+  });
+
+  function vibrate() {
+    if ('vibrate' in navigator) navigator.vibrate(50);
+  }
+
+  function switchTab(tabId) {
+    vibrate();
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    event.currentTarget.classList.add('active');
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+
+    if (tabId === 'batch') renderBatchList();
+    if (tabId === 'stats') renderStats();
+  }
+
+  function punchCategory(category) {
+    vibrate();
+    const note = document.getElementById('quick-note').value.trim();
+    const now = new Date();
+    
+    logs.push({
+      timestamp: now.getTime(),
+      datetime: now.toLocaleString('es-AR'),
+      category: category,
+      note: note || 'Sin nota'
+    });
+
+    localStorage.setItem('pixel_audit_logs', JSON.stringify(logs));
+    document.getElementById('quick-note').value = '';
+    updateUI();
+    alert(`✅ Registrado: ${category}`);
+  }
+
+  function updateUI() {
+    document.getElementById('current-interval-label').innerText = `ALARMA: ${intervalMinutes} MIN`;
+    
+    if (logs.length > 0) {
+      const last = logs[logs.length - 1];
+      document.getElementById('last-logged-text').innerText = `${last.category} (${last.datetime.split(' ')[1] || ''})`;
+    } else {
+      document.getElementById('last-logged-text').innerText = 'Sin registros aún';
+    }
+  }
+
+  // AUDIO CHIPTUNE
+  function playChiptuneAlarm() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const notes = [261.63, 329.63, 392.00, 523.25];
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.1, ctx.currentTime + idx * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (idx + 1) * 0.1);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + idx * 0.1);
+        osc.stop(ctx.currentTime + (idx + 1) * 0.1);
+      });
+    } catch (e) {
+      console.log('Audio no soportado', e);
+    }
+  }
+
+  function requestNotificationPerms() {
+    if ('Notification' in window) {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') alert('🔔 Notificaciones activadas correctamente');
+      });
+    }
+  }
+
+  function checkTimerLoop() {
+    const now = Date.now();
+    const diffMin = (now - lastCheckTimestamp) / (1000 * 60);
+    
+    if (diffMin >= intervalMinutes) {
+      const currentHour = new Date().getHours();
+      const isNight = currentHour >= 23 || currentHour < 7;
+
+      if (!isNight || !nightMute) {
+        playChiptuneAlarm();
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification('⏱️ PIXEL_AUDIT', { body: '¡Hora de registrar qué hiciste!' });
+        }
+      }
+      lastCheckTimestamp = now;
+      localStorage.setItem('pixel_audit_last_check', lastCheckTimestamp);
+    }
+  }
+
+  // COMPLETAR OLVIDOS (RETROACTIVO)
+  function getPendingBlocks() {
+    const blocks = [];
+    const now = new Date();
+    const lastTime = logs.length > 0 ? logs[logs.length - 1].timestamp : (now.getTime() - (4 * 3600 * 1000));
+    
+    let pointer = lastTime + (intervalMinutes * 60 * 1000);
+    while (pointer <= now.getTime()) {
+      const d = new Date(pointer);
+      blocks.push({
+        timestamp: pointer,
+        label: `${d.toLocaleDateString('es-AR')} - ${d.toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'})}`,
+        hour: d.getHours()
+      });
+      pointer += (intervalMinutes * 60 * 1000);
+    }
+    return blocks;
+  }
+
+  function renderBatchList() {
+    const pending = getPendingBlocks();
+    const container = document.getElementById('batch-list');
+    document.getElementById('pending-count-badge').innerText = `${pending.length} BLOQUES`;
+    container.innerHTML = '';
+
+    if (pending.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding:20px; font-weight:700;">🎉 No tenés bloques olvidados pendientes</div>';
+      return;
+    }
+
+    pending.forEach((b, idx) => {
+      const div = document.createElement('div');
+      div.className = 'retro-item';
+      div.dataset.hour = b.hour;
+      div.dataset.timestamp = b.timestamp;
+      div.dataset.label = b.label;
+      div.onclick = (e) => {
+        const chk = div.querySelector('input');
+        if (e.target !== chk) chk.checked = !chk.checked;
+        div.classList.toggle('selected', chk.checked);
+      };
+
+      div.innerHTML = `
+        <input type="checkbox" id="chk-${idx}">
+        <span style="font-weight:700; font-size:13px;">${b.label}</span>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function filterBatch(type) {
+    vibrate();
+    const items = document.querySelectorAll('.retro-item');
+    items.forEach(item => {
+      const chk = item.querySelector('input');
+      const hour = parseInt(item.dataset.hour);
+
+      let select = false;
+      if (type === 'all') select = true;
+      if (type === 'none') select = false;
+      if (type === 'morning' && hour >= 6 && hour < 13) select = true;
+      if (type === 'afternoon' && hour >= 13 && hour < 20) select = true;
+      if (type === 'sleep' && (hour >= 23 || hour < 7)) select = true;
+
+      chk.checked = select;
+      item.classList.toggle('selected', select);
+    });
+  }
+
+  function saveBatchLogs() {
+    vibrate();
+    const category = document.getElementById('batch-category').value;
+    const note = document.getElementById('batch-note').value.trim() || 'Carga retroactiva';
+    const items = document.querySelectorAll('.retro-item');
+    
+    let count = 0;
+    items.forEach(item => {
+      const chk = item.querySelector('input');
+      if (chk.checked) {
+        logs.push({
+          timestamp: parseInt(item.dataset.timestamp),
+          datetime: item.dataset.label,
+          category: category,
+          note: note
+        });
+        count++;
+      }
+    });
+
+    if (count > 0) {
+      localStorage.setItem('pixel_audit_logs', JSON.stringify(logs));
+      document.getElementById('batch-note').value = '';
+      renderBatchList();
+      updateUI();
+      alert(`✅ Se completaron ${count} bloques como: ${category}`);
+    } else {
+      alert('⚠️ Marcá al menos un bloque para guardar');
+    }
+  }
+
+  // MÉTRICAS
+  function renderStats() {
+    const container = document.getElementById('cpu-bar-display');
+    container.innerHTML = '';
+
+    let focusCount = 0;
+    let wasteCount = 0;
+    const totals = {};
+
+    logs.forEach(l => {
+      totals[l.category] = (totals[l.category] || 0) + 1;
+      if (l.category === 'Enfoque Profundo') focusCount++;
+      if (l.category === 'Fuga de Tiempo') wasteCount++;
+    });
+
+    const totalRated = focusCount + wasteCount;
+    const focusPct = totalRated > 0 ? Math.round((focusCount / totalRated) * 100) : 0;
+    const wastePct = totalRated > 0 ? Math.round((wasteCount / totalRated) * 100) : 0;
+
+    document.getElementById('ratio-focus-text').innerText = `ENFOQUE: ${focusPct}%`;
+    document.getElementById('ratio-waste-text').innerText = `FUGA: ${wastePct}%`;
+
+    // 10 segmentos del gráfico
+    for (let i = 0; i < 10; i++) {
+      const seg = document.createElement('div');
+      seg.className = 'cpu-segment';
+      if (i < Math.round(focusPct / 10)) seg.classList.add('active-focus');
+      else if (i >= 10 - Math.round(wastePct / 10)) seg.classList.add('active-waste');
+      container.appendChild(seg);
+    }
+
+    // Resumen de horas
+    const hoursList = document.getElementById('summary-hours-list');
+    hoursList.innerHTML = '';
+    Object.keys(totals).forEach(cat => {
+      const hrs = ((totals[cat] * intervalMinutes) / 60).toFixed(1);
+      hoursList.innerHTML += `<div><strong>${cat}:</strong> ${hrs} hs (${totals[cat]} bloques)</div>`;
+    });
+
+    // Historial
+    const historyContainer = document.getElementById('history-log-container');
+    historyContainer.innerHTML = '';
+    logs.slice(-15).reverse().forEach(l => {
+      historyContainer.innerHTML += `
+        <div class="log-row">
+          <span><strong>${l.category}</strong> (${l.note})</span>
+          <span>${l.datetime.split(' ')[1] || ''}</span>
+        </div>
+      `;
+    });
+  }
+
+  // CONFIGURACIÓN Y EXPORTACIÓN
+  function updateIntervalSetting() {
+    intervalMinutes = parseInt(document.getElementById('config-interval-select').value);
+    localStorage.setItem('pixel_audit_interval', intervalMinutes);
+    updateUI();
+  }
+
+  function toggleNightMute() {
+    nightMute = document.getElementById('night-mute-toggle').checked;
+    localStorage.setItem('pixel_audit_night_mute', nightMute);
+  }
+
+  function exportDataCSV() {
+    let csv = 'Fecha_Hora,Categoria,Nota\n';
+    logs.forEach(l => {
+      csv += `"${l.datetime}","${l.category}","${l.note}"\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pixel_audit_${Date.now()}.csv`;
+    a.click();
+  }
+
+  function exportDataJSON() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(logs));
+    const a = document.createElement('a');
+    a.href = dataStr;
+    a.download = `pixel_audit_backup_${Date.now()}.json`;
+    a.click();
+  }
+
+  function clearAllData() {
+    if (confirm('⚠️ ¿Estás seguro de borrar todo el historial?')) {
+      logs = [];
+      localStorage.removeItem('pixel_audit_logs');
+      updateUI();
+      alert('Historial borrado.');
+    }
+  }
+</script>
+</body>
+</html>
+
+```
