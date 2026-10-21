@@ -5,10 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>PIXEL_AUDIT v2.0</title>
   
-  <!-- Manifest PWA Embebido para instalación directa en Chrome/Android/GitHub Pages -->
   <link rel="manifest" href='data:application/manifest+json,{"name":"PIXEL_AUDIT","short_name":"Audit","start_url":".","display":"standalone","background_color":"#00F0FF","theme_color":"#FFDE59","icons":[{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
   
-  <!-- Tipografías Retro Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@500;700;900&display=swap" rel="stylesheet">
@@ -148,7 +146,14 @@
       transition: transform 0.05s, box-shadow 0.05s;
     }
 
-    .btn:active {
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: var(--shadow) !important;
+    }
+
+    .btn:active:not(:disabled) {
       transform: translate(3px, 3px);
       box-shadow: var(--shadow-pressed);
     }
@@ -284,6 +289,14 @@
       min-height: 24px;
       margin: 0;
     }
+
+    .status-box {
+      border: var(--border);
+      padding: 12px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -303,34 +316,33 @@
   <!-- PESTAÑA 1: REGISTRO EN VIVO -->
   <div id="tab-punch" class="tab-content active">
     <div class="badge-bar">
-      <span>ESTADO ACTUAL</span>
-      <span id="current-interval-label">ALARMA: 30 MIN</span>
+      <span>BLOQUE POR RELOJ</span>
+      <span id="current-interval-label">INT: 15 MIN</span>
     </div>
 
-    <div class="card" style="background: var(--yellow);">
-      <div style="font-size: 12px; font-weight: 900; margin-bottom: 4px;">ÚLTIMA ACTIVIDAD REGISTRADA:</div>
-      <div id="last-logged-text" style="font-size: 16px; font-weight: 900;">Cargando...</div>
+    <div id="slot-status-box" class="status-box" style="background: var(--yellow);">
+      Cargando estado del bloque...
     </div>
 
     <div class="card">
       <label style="font-weight: 900; font-size: 13px; display: block; margin-bottom: 6px;">NOTA / DETALLE RÁPIDO:</label>
-      <input type="text" id="quick-note" placeholder="Ej: Trabajo en informe, redes..." maxLength="30">
+      <input type="text" id="quick-note" placeholder="Ej: Estudio, Informe, Redes..." maxLength="30">
 
-      <div style="font-weight: 900; font-size: 13px; margin-top: 6px; margin-bottom: 6px;">¿QUÉ ESTÁS HACIENDO? (1 TOQUE):</div>
+      <div style="font-weight: 900; font-size: 13px; margin-top: 6px; margin-bottom: 6px;">¿QUÉ HICISTE EN ESTE BLOQUE?</div>
       <div class="grid-punch">
-        <button class="btn btn-green" onclick="punchCategory('Enfoque Profundo')">
+        <button class="btn btn-green punch-btn" onclick="punchCategory('Enfoque Profundo')">
           <span>🧠</span> ENFOQUE
         </button>
-        <button class="btn btn-yellow" onclick="punchCategory('Mantenimiento')">
+        <button class="btn btn-yellow punch-btn" onclick="punchCategory('Mantenimiento')">
           <span>🧹</span> LOGÍSTICA
         </button>
-        <button class="btn btn-cyan" onclick="punchCategory('Ocio Consciente')">
+        <button class="btn btn-cyan punch-btn" onclick="punchCategory('Ocio Consciente')">
           <span>🎮</span> OCIO
         </button>
-        <button class="btn btn-pink" onclick="punchCategory('Fuga de Tiempo')">
+        <button class="btn btn-pink punch-btn" onclick="punchCategory('Fuga de Tiempo')">
           <span>🔥</span> FUGA
         </button>
-        <button class="btn btn-purple" style="grid-column: span 2; height: 60px;" onclick="punchCategory('Sueño')">
+        <button class="btn btn-purple punch-btn" style="grid-column: span 2; height: 60px;" onclick="punchCategory('Sueño')">
           <span style="font-size: 18px;">🛌 SUEÑO / DESCANSO</span>
         </button>
       </div>
@@ -340,12 +352,12 @@
   <!-- PESTAÑA 2: COMPLETAR OLVIDOS (RETROACTIVO) -->
   <div id="tab-batch" class="tab-content">
     <div class="badge-bar">
-      <span>TIEMPO NO REGISTRADO</span>
+      <span>TIEMPO PENDIENTE</span>
       <span id="pending-count-badge">0 BLOQUES</span>
     </div>
 
     <div class="card">
-      <div style="font-size: 12px; font-weight: 700; margin-bottom: 8px;">SELECCIÓN RÁPIDA DE BLOQUES:</div>
+      <div style="font-size: 12px; font-weight: 700; margin-bottom: 8px;">FILTRAR BLOQUES SIN REGISTRAR:</div>
       <div class="filter-bar">
         <button class="btn btn-gray" onclick="filterBatch('all')">TODOS</button>
         <button class="btn btn-gray" onclick="filterBatch('none')">DESMARCAR</button>
@@ -368,7 +380,7 @@
         <option value="Fuga de Tiempo">🔥 Fuga de Tiempo</option>
         <option value="Sueño">🛌 Sueño / Descanso</option>
       </select>
-      <input type="text" id="batch-note" placeholder="Nota opcional para estos bloques">
+      <input type="text" id="batch-note" placeholder="Nota opcional para el lote">
       <button class="btn btn-green" onclick="saveBatchLogs()">GUARDAR BLOQUES SELECCIONADOS</button>
     </div>
   </div>
@@ -382,9 +394,7 @@
 
     <div class="card">
       <div style="font-weight: 900; font-size: 12px;">RATIO ENFOQUE VS FUGA:</div>
-      <div class="cpu-bar-container" id="cpu-bar-display">
-        <!-- Gráfico estilo CPU -->
-      </div>
+      <div class="cpu-bar-container" id="cpu-bar-display"></div>
       <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 13px;">
         <span style="color: green;" id="ratio-focus-text">ENFOQUE: 0%</span>
         <span style="color: red;" id="ratio-waste-text">FUGA: 0%</span>
@@ -393,31 +403,24 @@
 
     <div class="card">
       <div style="font-weight: 900; font-size: 13px; margin-bottom: 8px;">RESUMEN DE HORAS:</div>
-      <div id="summary-hours-list" style="font-size: 13px; line-height: 1.6;">
-        <!-- Horas acumuladas -->
-      </div>
+      <div id="summary-hours-list" style="font-size: 13px; line-height: 1.6;"></div>
     </div>
 
     <div class="card">
       <div style="font-weight: 900; font-size: 13px; margin-bottom: 8px;">HISTORIAL RECIENTE:</div>
-      <div class="history-log" id="history-log-container">
-        <!-- Filas del historial -->
-      </div>
+      <div class="history-log" id="history-log-container"></div>
     </div>
   </div>
 
   <!-- PESTAÑA 4: CONFIGURACIÓN -->
   <div id="tab-config" class="tab-content">
     <div class="card">
-      <div style="font-weight: 900; font-size: 14px; margin-bottom: 10px;">FRECUENCIA DE AVISOS</div>
+      <div style="font-weight: 900; font-size: 14px; margin-bottom: 10px;">INTERVALO DE RELOJ</div>
       <select id="config-interval-select" onchange="updateIntervalSetting()">
-        <option value="15">Cada 15 minutos</option>
-        <option value="30">Cada 30 minutos</option>
+        <option value="15">Cada 15 minutos (00, 15, 30, 45)</option>
+        <option value="30">Cada 30 minutos (00, 30)</option>
         <option value="60">Cada 1 hora</option>
         <option value="120">Cada 2 horas</option>
-        <option value="360">Cada 6 horas</option>
-        <option value="720">Cada 12 horas</option>
-        <option value="1440">Cada 24 horas</option>
       </select>
 
       <div class="toggle-row">
@@ -426,7 +429,7 @@
       </div>
 
       <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
-        <button class="btn btn-cyan" onclick="requestNotificationPerms()">🔔 PERMITIR NOTIFICACIONES</button>
+        <button class="btn btn-cyan" onclick="requestNotificationPerms()">🔔 ACTIVAR NOTIFICACIONES ANDROID</button>
         <button class="btn btn-yellow" onclick="playChiptuneAlarm()">🔊 PROBAR ALARMA 8-BIT</button>
       </div>
     </div>
@@ -443,44 +446,120 @@
 </div>
 
 <script>
-  // ESTADO DE LA APLICACIÓN
   let logs = JSON.parse(localStorage.getItem('pixel_audit_logs') || '[]');
-  let intervalMinutes = parseInt(localStorage.getItem('pixel_audit_interval') || '30');
+  let intervalMinutes = parseInt(localStorage.getItem('pixel_audit_interval') || '15');
   let nightMute = localStorage.getItem('pixel_audit_night_mute') === 'true';
-  let lastCheckTimestamp = parseInt(localStorage.getItem('pixel_audit_last_check') || Date.now());
+  let swRegistration = null;
+  let activeTargetSlot = null;
 
-  // INICIALIZACIÓN
+  // Registrar Service Worker para notificaciones nativas en Android Chrome
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => {
+        swRegistration = reg;
+      })
+      .catch(err => console.log('Error SW:', err));
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('config-interval-select').value = intervalMinutes;
     document.getElementById('night-mute-toggle').checked = nightMute;
     updateUI();
-    setInterval(checkTimerLoop, 10000); // Revisa el temporizador cada 10s
+    setInterval(updateUI, 5000);
   });
 
   function vibrate() {
     if ('vibrate' in navigator) navigator.vibrate(50);
   }
 
-  function switchTab(tabId) {
-    vibrate();
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    
-    event.currentTarget.classList.add('active');
-    document.getElementById(`tab-${tabId}`).classList.add('active');
+  function getIntervalMs() {
+    return intervalMinutes * 60 * 1000;
+  }
 
-    if (tabId === 'batch') renderBatchList();
-    if (tabId === 'stats') renderStats();
+  function getSlotStart(timestamp) {
+    const ms = getIntervalMs();
+    return Math.floor(timestamp / ms) * ms;
+  }
+
+  function formatTime(ts) {
+    return new Date(ts).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function formatSlotRange(slotStart) {
+    const startStr = formatTime(slotStart);
+    const endStr = formatTime(slotStart + getIntervalMs());
+    return `${startStr} hs a ${endStr} hs`;
+  }
+
+  function getUnloggedCompletedSlots() {
+    const ms = getIntervalMs();
+    const now = Date.now();
+    const currentSlotStart = getSlotStart(now);
+    const loggedMap = new Set(logs.map(l => l.slotStart));
+
+    let searchStart = now - (24 * 3600 * 1000);
+    if (logs.length > 0) {
+      const maxLogged = Math.max(...logs.map(l => l.slotStart || getSlotStart(l.timestamp)));
+      searchStart = Math.max(searchStart, maxLogged + ms);
+    } else {
+      searchStart = getSlotStart(searchStart);
+    }
+
+    const unlogged = [];
+    let ptr = getSlotStart(searchStart);
+    while (ptr < currentSlotStart) {
+      if (!loggedMap.has(ptr)) {
+        unlogged.push(ptr);
+      }
+      ptr += ms;
+    }
+    return unlogged;
+  }
+
+  function updateUI() {
+    document.getElementById('current-interval-label').innerText = `INT: ${intervalMinutes} MIN`;
+
+    const unloggedSlots = getUnloggedCompletedSlots();
+    const statusBox = document.getElementById('slot-status-box');
+    const punchBtns = document.querySelectorAll('.punch-btn');
+
+    if (unloggedSlots.length > 0) {
+      activeTargetSlot = unloggedSlots[0];
+      const countPending = unloggedSlots.length;
+      
+      statusBox.style.background = 'var(--yellow)';
+      statusBox.innerHTML = `
+        📍 AUDITAR BLOQUE VENCIDO ${countPending > 1 ? `(1 de ${countPending})` : ''}:<br>
+        <span style="font-size: 18px;">${formatSlotRange(activeTargetSlot)}</span>
+      `;
+      punchBtns.forEach(btn => btn.disabled = false);
+      triggerPendingNotification(activeTargetSlot);
+
+    } else {
+      activeTargetSlot = null;
+      const currentSlotStart = getSlotStart(Date.now());
+      const nextAvailableTime = formatTime(currentSlotStart + getIntervalMs());
+      
+      statusBox.style.background = 'var(--gray)';
+      statusBox.innerHTML = `
+        🔒 BLOQUE EN CURSO (${formatSlotRange(currentSlotStart)})<br>
+        <span style="font-size: 13px; color: #444;">Próximo registro disponible a las <strong>${nextAvailableTime}</strong></span>
+      `;
+      punchBtns.forEach(btn => btn.disabled = true);
+    }
   }
 
   function punchCategory(category) {
+    if (!activeTargetSlot) return;
     vibrate();
+
     const note = document.getElementById('quick-note').value.trim();
-    const now = new Date();
-    
+    const d = new Date(activeTargetSlot);
+
     logs.push({
-      timestamp: now.getTime(),
-      datetime: now.toLocaleString('es-AR'),
+      timestamp: Date.now(),
+      slotStart: activeTargetSlot,
+      datetime: `${d.toLocaleDateString('es-AR')} ${formatSlotRange(activeTargetSlot)}`,
       category: category,
       note: note || 'Sin nota'
     });
@@ -488,21 +567,45 @@
     localStorage.setItem('pixel_audit_logs', JSON.stringify(logs));
     document.getElementById('quick-note').value = '';
     updateUI();
-    alert(`✅ Registrado: ${category}`);
   }
 
-  function updateUI() {
-    document.getElementById('current-interval-label').innerText = `ALARMA: ${intervalMinutes} MIN`;
+  let lastNotifiedSlot = null;
+  function triggerPendingNotification(slotStart) {
+    if (lastNotifiedSlot === slotStart) return;
     
-    if (logs.length > 0) {
-      const last = logs[logs.length - 1];
-      document.getElementById('last-logged-text').innerText = `${last.category} (${last.datetime.split(' ')[1] || ''})`;
-    } else {
-      document.getElementById('last-logged-text').innerText = 'Sin registros aún';
+    const currentHour = new Date().getHours();
+    const isNight = currentHour >= 23 || currentHour < 7;
+    if (isNight && nightMute) return;
+
+    playChiptuneAlarm();
+    lastNotifiedSlot = slotStart;
+
+    const title = '⏱️ PIXEL_AUDIT: ¡Hora de registrar!';
+    const options = {
+      body: `Finalizó el bloque: ${formatSlotRange(slotStart)}`,
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⏱️</text></svg>',
+      vibrate: [200, 100, 200]
+    };
+
+    if (swRegistration && swRegistration.showNotification) {
+      swRegistration.showNotification(title, options);
+    } else if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, options);
     }
   }
 
-  // AUDIO CHIPTUNE
+  function requestNotificationPerms() {
+    if ('Notification' in window) {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          alert('🔔 Notificaciones permitidas.');
+        } else {
+          alert('⚠️ Permiso denegado.');
+        }
+      });
+    }
+  }
+
   function playChiptuneAlarm() {
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -520,74 +623,42 @@
         osc.start(ctx.currentTime + idx * 0.1);
         osc.stop(ctx.currentTime + (idx + 1) * 0.1);
       });
-    } catch (e) {
-      console.log('Audio no soportado', e);
-    }
+    } catch (e) {}
   }
 
-  function requestNotificationPerms() {
-    if ('Notification' in window) {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') alert('🔔 Notificaciones activadas correctamente');
-      });
-    }
-  }
-
-  function checkTimerLoop() {
-    const now = Date.now();
-    const diffMin = (now - lastCheckTimestamp) / (1000 * 60);
+  function switchTab(tabId) {
+    vibrate();
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     
-    if (diffMin >= intervalMinutes) {
-      const currentHour = new Date().getHours();
-      const isNight = currentHour >= 23 || currentHour < 7;
+    event.currentTarget.classList.add('active');
+    document.getElementById(`tab-${tabId}`).classList.add('active');
 
-      if (!isNight || !nightMute) {
-        playChiptuneAlarm();
-        if ('Notification' in window && Notification.permission === 'granted') {
-          new Notification('⏱️ PIXEL_AUDIT', { body: '¡Hora de registrar qué hiciste!' });
-        }
-      }
-      lastCheckTimestamp = now;
-      localStorage.setItem('pixel_audit_last_check', lastCheckTimestamp);
-    }
-  }
-
-  // COMPLETAR OLVIDOS (RETROACTIVO)
-  function getPendingBlocks() {
-    const blocks = [];
-    const now = new Date();
-    const lastTime = logs.length > 0 ? logs[logs.length - 1].timestamp : (now.getTime() - (4 * 3600 * 1000));
-    
-    let pointer = lastTime + (intervalMinutes * 60 * 1000);
-    while (pointer <= now.getTime()) {
-      const d = new Date(pointer);
-      blocks.push({
-        timestamp: pointer,
-        label: `${d.toLocaleDateString('es-AR')} - ${d.toLocaleTimeString('es-AR', {hour: '2-digit', minute:'2-digit'})}`,
-        hour: d.getHours()
-      });
-      pointer += (intervalMinutes * 60 * 1000);
-    }
-    return blocks;
+    if (tabId === 'batch') renderBatchList();
+    if (tabId === 'stats') renderStats();
   }
 
   function renderBatchList() {
-    const pending = getPendingBlocks();
+    const pendingSlots = getUnloggedCompletedSlots();
     const container = document.getElementById('batch-list');
-    document.getElementById('pending-count-badge').innerText = `${pending.length} BLOQUES`;
+    document.getElementById('pending-count-badge').innerText = `${pendingSlots.length} BLOQUES`;
     container.innerHTML = '';
 
-    if (pending.length === 0) {
-      container.innerHTML = '<div style="text-align:center; padding:20px; font-weight:700;">🎉 No tenés bloques olvidados pendientes</div>';
+    if (pendingSlots.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding:20px; font-weight:700;">🎉 Todo al día. No tenés bloques pendientes.</div>';
       return;
     }
 
-    pending.forEach((b, idx) => {
+    pendingSlots.forEach((slotStart, idx) => {
+      const d = new Date(slotStart);
+      const hour = d.getHours();
+      const label = `${d.toLocaleDateString('es-AR')} - ${formatSlotRange(slotStart)}`;
+
       const div = document.createElement('div');
       div.className = 'retro-item';
-      div.dataset.hour = b.hour;
-      div.dataset.timestamp = b.timestamp;
-      div.dataset.label = b.label;
+      div.dataset.hour = hour;
+      div.dataset.slotStart = slotStart;
+      div.dataset.label = label;
       div.onclick = (e) => {
         const chk = div.querySelector('input');
         if (e.target !== chk) chk.checked = !chk.checked;
@@ -596,7 +667,7 @@
 
       div.innerHTML = `
         <input type="checkbox" id="chk-${idx}">
-        <span style="font-weight:700; font-size:13px;">${b.label}</span>
+        <span style="font-weight:700; font-size:12px;">${label}</span>
       `;
       container.appendChild(div);
     });
@@ -624,15 +695,17 @@
   function saveBatchLogs() {
     vibrate();
     const category = document.getElementById('batch-category').value;
-    const note = document.getElementById('batch-note').value.trim() || 'Carga retroactiva';
+    const note = document.getElementById('batch-note').value.trim() || 'Carga en lote';
     const items = document.querySelectorAll('.retro-item');
     
     let count = 0;
     items.forEach(item => {
       const chk = item.querySelector('input');
       if (chk.checked) {
+        const slotStart = parseInt(item.dataset.slotStart);
         logs.push({
-          timestamp: parseInt(item.dataset.timestamp),
+          timestamp: Date.now(),
+          slotStart: slotStart,
           datetime: item.dataset.label,
           category: category,
           note: note
@@ -646,13 +719,12 @@
       document.getElementById('batch-note').value = '';
       renderBatchList();
       updateUI();
-      alert(`✅ Se completaron ${count} bloques como: ${category}`);
+      alert(`✅ Se completaron ${count} bloques pendientes.`);
     } else {
-      alert('⚠️ Marcá al menos un bloque para guardar');
+      alert('⚠️ Marcá al menos un bloque.');
     }
   }
 
-  // MÉTRICAS
   function renderStats() {
     const container = document.getElementById('cpu-bar-display');
     container.innerHTML = '';
@@ -674,7 +746,6 @@
     document.getElementById('ratio-focus-text').innerText = `ENFOQUE: ${focusPct}%`;
     document.getElementById('ratio-waste-text').innerText = `FUGA: ${wastePct}%`;
 
-    // 10 segmentos del gráfico
     for (let i = 0; i < 10; i++) {
       const seg = document.createElement('div');
       seg.className = 'cpu-segment';
@@ -683,7 +754,6 @@
       container.appendChild(seg);
     }
 
-    // Resumen de horas
     const hoursList = document.getElementById('summary-hours-list');
     hoursList.innerHTML = '';
     Object.keys(totals).forEach(cat => {
@@ -691,20 +761,18 @@
       hoursList.innerHTML += `<div><strong>${cat}:</strong> ${hrs} hs (${totals[cat]} bloques)</div>`;
     });
 
-    // Historial
     const historyContainer = document.getElementById('history-log-container');
     historyContainer.innerHTML = '';
     logs.slice(-15).reverse().forEach(l => {
       historyContainer.innerHTML += `
         <div class="log-row">
           <span><strong>${l.category}</strong> (${l.note})</span>
-          <span>${l.datetime.split(' ')[1] || ''}</span>
+          <span style="font-size: 10px;">${l.datetime.split(' ')[1] || ''}</span>
         </div>
       `;
     });
   }
 
-  // CONFIGURACIÓN Y EXPORTACIÓN
   function updateIntervalSetting() {
     intervalMinutes = parseInt(document.getElementById('config-interval-select').value);
     localStorage.setItem('pixel_audit_interval', intervalMinutes);
@@ -748,5 +816,3 @@
 </script>
 </body>
 </html>
-
-```
