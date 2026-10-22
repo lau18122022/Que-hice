@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>PIXEL_AUDIT v2.0</title>
+  <title>PIXEL_AUDIT v3.0 - Advanced Metrics</title>
   
   <link rel="manifest" href='data:application/manifest+json,{"name":"PIXEL_AUDIT","short_name":"Audit","start_url":".","display":"standalone","background_color":"#00F0FF","theme_color":"#FFDE59","icons":[{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
   
@@ -26,6 +26,7 @@
       --purple: #B55FE6;
       --orange: #FF914D;
       --gray: #E0E0E0;
+      --dark-gray: #333333;
     }
 
     * {
@@ -66,7 +67,7 @@
 
     h1 {
       font-family: 'Press Start 2P', cursive;
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.3;
       text-transform: uppercase;
       letter-spacing: -1px;
@@ -82,8 +83,8 @@
 
     .tab-btn {
       flex: 1;
-      min-width: 80px;
-      padding: 10px 6px;
+      min-width: 75px;
+      padding: 10px 4px;
       background: var(--card-bg);
       border: var(--border);
       box-shadow: var(--shadow);
@@ -131,13 +132,13 @@
 
     .btn {
       width: 100%;
-      min-height: 50px;
+      min-height: 48px;
       border: var(--border);
       box-shadow: var(--shadow);
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 900;
-      font-size: 15px;
-      padding: 10px;
+      font-size: 14px;
+      padding: 8px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -163,6 +164,7 @@
     .btn-pink { background: var(--pink); color: #FFF; }
     .btn-cyan { background: var(--cyan); }
     .btn-purple { background: var(--purple); color: #FFF; }
+    .btn-orange { background: var(--orange); }
     .btn-gray { background: var(--gray); }
 
     .grid-punch {
@@ -185,12 +187,12 @@
 
     input, select {
       width: 100%;
-      min-height: 46px;
+      min-height: 44px;
       border: var(--border);
       padding: 8px 12px;
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 15px;
       background: #FFF;
       margin-bottom: 10px;
       outline: none;
@@ -236,35 +238,182 @@
     }
 
     .filter-bar .btn {
-      min-height: 38px;
-      font-size: 11px;
+      min-height: 36px;
+      font-size: 10px;
       padding: 4px;
     }
 
-    .cpu-bar-container {
+    .status-box {
       border: var(--border);
-      background: #000;
-      padding: 4px;
-      height: 32px;
-      margin-top: 6px;
-      margin-bottom: 12px;
+      padding: 12px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    /* ESTILOS ESPECÍFICOS DEL DASHBOARD DE MÉTRICAS Avanzado */
+    .date-nav-bar {
       display: flex;
-      gap: 3px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 10px;
     }
 
-    .cpu-segment {
+    .date-nav-bar .btn {
+      min-height: 38px;
+      width: auto;
+      padding: 0 12px;
+      font-size: 11px;
+    }
+
+    .date-display-title {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 9px;
+      text-align: center;
       flex: 1;
-      height: 100%;
-      background: #222;
+      background: #FFF;
+      border: var(--border);
+      padding: 10px 4px;
+      box-shadow: var(--shadow);
     }
 
-    .cpu-segment.active-focus { background: var(--green); }
-    .cpu-segment.active-waste { background: var(--pink); }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .kpi-card {
+      border: var(--border);
+      padding: 10px;
+      background: #FFF;
+      box-shadow: 3px 3px 0px #000;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .kpi-title {
+      font-size: 10px;
+      font-weight: 900;
+      color: #555;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 15px;
+      color: #000;
+    }
+
+    .kpi-subtext {
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .timeline-container {
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: repeat(24, 1fr);
+      gap: 2px;
+      background: #000;
+      border: var(--border);
+      padding: 3px;
+    }
+
+    .timeline-block {
+      height: 28px;
+      background: #E0E0E0;
+      border: 1px solid #000;
+    }
+
+    .timeline-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: 900;
+      margin-top: 4px;
+    }
+
+    .insight-card {
+      background: #FFF;
+      border: var(--border);
+      padding: 10px;
+      margin-bottom: 10px;
+      box-shadow: 3px 3px 0px #000;
+    }
+
+    .insight-title {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 9px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .weekly-chart-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      align-items: flex-end;
+      height: 120px;
+      padding: 10px 4px 4px 4px;
+      background: #FFF;
+      border: var(--border);
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .weekly-bar-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .weekly-bar-fill {
+      width: 100%;
+      background: var(--green);
+      border: 2px solid #000;
+      transition: height 0.3s;
+    }
+
+    .weekly-bar-label {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 7px;
+      margin-top: 6px;
+    }
+
+    .cat-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .cat-dot {
+      width: 12px;
+      height: 12px;
+      border: 1px solid #000;
+      display: inline-block;
+    }
 
     .history-log {
-      max-height: 200px;
+      max-height: 180px;
       overflow-y: auto;
-      font-size: 12px;
+      font-size: 11px;
     }
 
     .log-row {
@@ -290,12 +439,19 @@
       margin: 0;
     }
 
-    .status-box {
-      border: var(--border);
-      padding: 12px;
-      font-weight: 900;
-      text-align: center;
-      margin-bottom: 10px;
+    .progress-bar-bg {
+      background: #E0E0E0;
+      border: 2px solid #000;
+      height: 16px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      background: var(--green);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s;
     }
   </style>
 </head>
@@ -303,7 +459,7 @@
 
 <div class="container">
   <header>
-    <h1>⏱️ PIXEL_AUDIT v2.0</h1>
+    <h1>⏱️ PIXEL_AUDIT v3.0</h1>
   </header>
 
   <div class="nav-tabs">
@@ -366,9 +522,7 @@
         <button class="btn btn-purple" style="grid-column: span 2;" onclick="filterBatch('sleep')">🛌 NOCHE / SUEÑO (23-7)</button>
       </div>
 
-      <div id="batch-list" class="retro-list">
-        <!-- Lista de bloques pasados -->
-      </div>
+      <div id="batch-list" class="retro-list"></div>
     </div>
 
     <div class="card" style="background: var(--cyan);">
@@ -385,31 +539,111 @@
     </div>
   </div>
 
-  <!-- PESTAÑA 3: MÉTRICAS -->
+  <!-- PESTAÑA 3: MÉTRICAS AVANZADAS (DASHBOARD COMPLETO) -->
   <div id="tab-stats" class="tab-content">
-    <div class="badge-bar">
-      <span>RENDIMIENTO DEL DÍA</span>
-      <span id="stats-date-badge">HOY</span>
+    
+    <!-- Navegador de Fechas -->
+    <div class="date-nav-bar">
+      <button class="btn btn-gray" onclick="shiftStatsDate(-1)">◀ ANTERIOR</button>
+      <div class="date-display-title" id="stats-date-display">HOY</div>
+      <button class="btn btn-gray" onclick="shiftStatsDate(1)">SIGUIENTE ▶</button>
     </div>
 
-    <div class="card">
-      <div style="font-weight: 900; font-size: 12px;">RATIO ENFOQUE VS FUGA:</div>
-      <div class="cpu-bar-container" id="cpu-bar-display"></div>
-      <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 13px;">
-        <span style="color: green;" id="ratio-focus-text">ENFOQUE: 0%</span>
-        <span style="color: red;" id="ratio-waste-text">FUGA: 0%</span>
+    <!-- Filtros de Rango -->
+    <div class="filter-bar">
+      <button class="btn btn-yellow" id="range-btn-day" onclick="setStatsRange('day')">DÍA</button>
+      <button class="btn btn-gray" id="range-btn-week" onclick="setStatsRange('week')">SEMANA</button>
+      <button class="btn btn-gray" id="range-btn-all" onclick="setStatsRange('all')">HISTÓRICO</button>
+      <button class="btn btn-cyan" onclick="resetStatsDateToToday()">HOY</button>
+    </div>
+
+    <!-- KPIs Principales -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">EFICIENCIA</div>
+        <div class="kpi-value" id="kpi-efficiency">0%</div>
+        <div class="kpi-subtext" id="kpi-efficiency-sub">Foco vs Fuga</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">HORAS ENFOQUE</div>
+        <div class="kpi-value" id="kpi-focus-hours">0.0h</div>
+        <div class="kpi-subtext" id="kpi-focus-sub">Tiempo Útil</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">COBERTURA</div>
+        <div class="kpi-value" id="kpi-coverage">0%</div>
+        <div class="kpi-subtext" id="kpi-coverage-sub">Día Auditado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">HORAS FUGA</div>
+        <div class="kpi-value" id="kpi-waste-hours" style="color: var(--pink);">0.0h</div>
+        <div class="kpi-subtext">Desperdiciadas</div>
       </div>
     </div>
 
+    <!-- Meta Diaria de Enfoque -->
     <div class="card">
-      <div style="font-weight: 900; font-size: 13px; margin-bottom: 8px;">RESUMEN DE HORAS:</div>
-      <div id="summary-hours-list" style="font-size: 13px; line-height: 1.6;"></div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: 900; font-size: 11px;">🎯 META DE ENFOQUE (4.0 hs):</span>
+        <span style="font-family: 'Press Start 2P', cursive; font-size: 9px;" id="target-progress-text">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="target-progress-bar"></div>
+      </div>
     </div>
 
+    <!-- Mapa Visual del Día (24 Horas) -->
+    <div class="card" id="timeline-card-section">
+      <div style="font-weight: 900; font-size: 11px; margin-bottom: 6px;">🗺️ MAPA DE 24 HORAS DEL DÍA:</div>
+      <div class="timeline-container">
+        <div class="timeline-grid" id="timeline-grid-display">
+          <!-- 24 bloques generados por JS -->
+        </div>
+        <div class="timeline-labels">
+          <span>00:00</span>
+          <span>06:00</span>
+          <span>12:00</span>
+          <span>18:00</span>
+          <span>24:00</span>
+        </div>
+      </div>
+      <div class="cat-legend">
+        <span><span class="cat-dot" style="background: var(--green);"></span> Enfoque</span>
+        <span><span class="cat-dot" style="background: var(--yellow);"></span> Logística</span>
+        <span><span class="cat-dot" style="background: var(--cyan);"></span> Ocio</span>
+        <span><span class="cat-dot" style="background: var(--pink);"></span> Fuga</span>
+        <span><span class="cat-dot" style="background: var(--purple);"></span> Sueño</span>
+        <span><span class="cat-dot" style="background: var(--gray);"></span> Vacío</span>
+      </div>
+    </div>
+
+    <!-- Insights y Patrones -->
+    <div class="insight-card">
+      <div class="insight-title">💡 INSIGHTS Y PATRONES</div>
+      <div id="insight-text-1" style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">• Franja de oro: Cargando...</div>
+      <div id="insight-text-2" style="font-size: 12px; font-weight: 700;">• Pico de Fuga de tiempo: Cargando...</div>
+    </div>
+
+    <!-- Gráfico Comparativo Semanal -->
+    <div class="card" id="weekly-card-section">
+      <div style="font-weight: 900; font-size: 11px;">📊 ENFOQUE POR DÍA DE LA SEMANA (HS):</div>
+      <div class="weekly-chart-grid" id="weekly-chart-display">
+        <!-- 7 Columnas generadas por JS -->
+      </div>
+    </div>
+
+    <!-- Desglose por Categorías -->
     <div class="card">
-      <div style="font-weight: 900; font-size: 13px; margin-bottom: 8px;">HISTORIAL RECIENTE:</div>
+      <div style="font-weight: 900; font-size: 12px; margin-bottom: 8px;">📋 DESGLOSE TOTAL DE HORAS:</div>
+      <div id="summary-hours-list" style="font-size: 12px; line-height: 1.6;"></div>
+    </div>
+
+    <!-- Historial Filtrado -->
+    <div class="card">
+      <div style="font-weight: 900; font-size: 12px; margin-bottom: 8px;">📜 HISTORIAL EN ESTE RANGO:</div>
       <div class="history-log" id="history-log-container"></div>
     </div>
+
   </div>
 
   <!-- PESTAÑA 4: CONFIGURACIÓN -->
@@ -446,19 +680,27 @@
 </div>
 
 <script>
+  if (!localStorage.getItem('pixel_audit_init_time')) {
+    localStorage.setItem('pixel_audit_init_time', Date.now().toString());
+  }
+
+  let initTime = parseInt(localStorage.getItem('pixel_audit_init_time'));
   let logs = JSON.parse(localStorage.getItem('pixel_audit_logs') || '[]');
   let intervalMinutes = parseInt(localStorage.getItem('pixel_audit_interval') || '15');
   let nightMute = localStorage.getItem('pixel_audit_night_mute') === 'true';
   let swRegistration = null;
   let activeTargetSlot = null;
 
-  // Registrar Service Worker para notificaciones nativas en Android Chrome
+  // Estado para el navegador de métricas
+  let statsViewDate = new Date();
+  let statsRangeMode = 'day'; // 'day', 'week', 'all'
+
+  const DAILY_TARGET_FOCUS_HOURS = 4.0; // Meta diaria configurable en horas
+
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
-      .then(reg => {
-        swRegistration = reg;
-      })
-      .catch(err => console.log('Error SW:', err));
+      .then(reg => { swRegistration = reg; })
+      .catch(err => console.log('SW error:', err));
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -466,6 +708,10 @@
     document.getElementById('night-mute-toggle').checked = nightMute;
     updateUI();
     setInterval(updateUI, 5000);
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') updateUI();
   });
 
   function vibrate() {
@@ -495,20 +741,14 @@
     const ms = getIntervalMs();
     const now = Date.now();
     const currentSlotStart = getSlotStart(now);
-    const loggedMap = new Set(logs.map(l => l.slotStart));
+    const loggedSlotStarts = new Set(logs.map(l => l.slotStart));
 
-    let searchStart = now - (24 * 3600 * 1000);
-    if (logs.length > 0) {
-      const maxLogged = Math.max(...logs.map(l => l.slotStart || getSlotStart(l.timestamp)));
-      searchStart = Math.max(searchStart, maxLogged + ms);
-    } else {
-      searchStart = getSlotStart(searchStart);
-    }
-
+    let startSlot = getSlotStart(initTime);
     const unlogged = [];
-    let ptr = getSlotStart(searchStart);
+    let ptr = startSlot;
+
     while (ptr < currentSlotStart) {
-      if (!loggedMap.has(ptr)) {
+      if (!loggedSlotStarts.has(ptr)) {
         unlogged.push(ptr);
       }
       ptr += ms;
@@ -546,6 +786,10 @@
         <span style="font-size: 13px; color: #444;">Próximo registro disponible a las <strong>${nextAvailableTime}</strong></span>
       `;
       punchBtns.forEach(btn => btn.disabled = true);
+    }
+
+    if (document.getElementById('tab-stats').classList.contains('active')) {
+      renderStats();
     }
   }
 
@@ -638,6 +882,255 @@
     if (tabId === 'stats') renderStats();
   }
 
+  // --- LÓGICA DEL DASHBOARD DE MÉTRICAS AVANZADO ---
+
+  function shiftStatsDate(deltaDays) {
+    vibrate();
+    statsViewDate.setDate(statsViewDate.getDate() + deltaDays);
+    renderStats();
+  }
+
+  function resetStatsDateToToday() {
+    vibrate();
+    statsViewDate = new Date();
+    statsRangeMode = 'day';
+    renderStats();
+  }
+
+  function setStatsRange(mode) {
+    vibrate();
+    statsRangeMode = mode;
+    
+    document.getElementById('range-btn-day').className = mode === 'day' ? 'btn btn-yellow' : 'btn btn-gray';
+    document.getElementById('range-btn-week').className = mode === 'week' ? 'btn btn-yellow' : 'btn btn-gray';
+    document.getElementById('range-btn-all').className = mode === 'all' ? 'btn btn-yellow' : 'btn btn-gray';
+
+    renderStats();
+  }
+
+  function getFilteredLogs() {
+    const targetDateStr = statsViewDate.toLocaleDateString('es-AR');
+    
+    if (statsRangeMode === 'day') {
+      return logs.filter(l => {
+        const d = new Date(l.slotStart || l.timestamp);
+        return d.toLocaleDateString('es-AR') === targetDateStr;
+      });
+    }
+
+    if (statsRangeMode === 'week') {
+      const endMs = new Date(statsViewDate).setHours(23, 59, 59, 999);
+      const startMs = endMs - (7 * 24 * 3600 * 1000);
+      return logs.filter(l => {
+        const ts = l.slotStart || l.timestamp;
+        return ts >= startMs && ts <= endMs;
+      });
+    }
+
+    return logs; // 'all'
+  }
+
+  function renderStats() {
+    const isToday = statsViewDate.toLocaleDateString('es-AR') === new Date().toLocaleDateString('es-AR');
+    const dateDisplay = document.getElementById('stats-date-display');
+    
+    if (statsRangeMode === 'day') {
+      dateDisplay.innerText = isToday ? `HOY (${statsViewDate.toLocaleDateString('es-AR')})` : statsViewDate.toLocaleDateString('es-AR');
+    } else if (statsRangeMode === 'week') {
+      dateDisplay.innerText = `ÚLTIMOS 7 DÍAS`;
+    } else {
+      dateDisplay.innerText = `HISTÓRICO COMPLETO`;
+    }
+
+    const filtered = getFilteredLogs();
+
+    // KPIs
+    let focusBlocks = 0;
+    let wasteBlocks = 0;
+    let maintentanceBlocks = 0;
+    let leisureBlocks = 0;
+    let sleepBlocks = 0;
+
+    const totals = {};
+    const hourlyFocusMap = new Array(24).fill(0);
+    const hourlyWasteMap = new Array(24).fill(0);
+
+    filtered.forEach(l => {
+      totals[l.category] = (totals[l.category] || 0) + 1;
+      const hour = new Date(l.slotStart || l.timestamp).getHours();
+
+      if (l.category === 'Enfoque Profundo') {
+        focusBlocks++;
+        hourlyFocusMap[hour]++;
+      } else if (l.category === 'Fuga de Tiempo') {
+        wasteBlocks++;
+        hourlyWasteMap[hour]++;
+      } else if (l.category === 'Mantenimiento') maintentanceBlocks++;
+      else if (l.category === 'Ocio Consciente') leisureBlocks++;
+      else if (l.category === 'Sueño') sleepBlocks++;
+    });
+
+    const focusHours = (focusBlocks * intervalMinutes) / 60;
+    const wasteHours = (wasteBlocks * intervalMinutes) / 60;
+    const totalRated = focusBlocks + wasteBlocks;
+    const efficiency = totalRated > 0 ? Math.round((focusBlocks / totalRated) * 100) : 0;
+
+    // Cobertura del día (96 bloques de 15 min en 24h)
+    const blocksInDay = (24 * 60) / intervalMinutes;
+    const coverage = statsRangeMode === 'day' ? Math.min(100, Math.round((filtered.length / blocksInDay) * 100)) : 100;
+
+    document.getElementById('kpi-efficiency').innerText = `${efficiency}%`;
+    document.getElementById('kpi-focus-hours').innerText = `${focusHours.toFixed(1)}h`;
+    document.getElementById('kpi-waste-hours').innerText = `${wasteHours.toFixed(1)}h`;
+    document.getElementById('kpi-coverage').innerText = `${coverage}%`;
+
+    // Meta Diaria Progress Bar
+    const targetPct = Math.min(100, Math.round((focusHours / DAILY_TARGET_FOCUS_HOURS) * 100));
+    document.getElementById('target-progress-text').innerText = `${targetPct}%`;
+    document.getElementById('target-progress-bar').style.width = `${targetPct}%`;
+
+    // Render 24H Timeline Grid
+    render24hTimeline();
+
+    // Render Insights
+    renderInsights(hourlyFocusMap, hourlyWasteMap);
+
+    // Render Weekly Chart
+    renderWeeklyChart();
+
+    // Desglose de horas
+    const hoursList = document.getElementById('summary-hours-list');
+    hoursList.innerHTML = '';
+    if (Object.keys(totals).length === 0) {
+      hoursList.innerHTML = '<em>Sin datos en este rango.</em>';
+    } else {
+      Object.keys(totals).forEach(cat => {
+        const hrs = ((totals[cat] * intervalMinutes) / 60).toFixed(1);
+        hoursList.innerHTML += `<div>• <strong>${cat}:</strong> ${hrs} hs (${totals[cat]} bloques)</div>`;
+      });
+    }
+
+    // Historial
+    const historyContainer = document.getElementById('history-log-container');
+    historyContainer.innerHTML = '';
+    if (filtered.length === 0) {
+      historyContainer.innerHTML = '<div style="padding:10px; text-align:center;">No hay registros.</div>';
+    } else {
+      filtered.slice(-20).reverse().forEach(l => {
+        historyContainer.innerHTML += `
+          <div class="log-row">
+            <span><strong>${l.category}</strong> (${l.note})</span>
+            <span style="font-size: 10px;">${l.datetime.split(' ')[1] || ''}</span>
+          </div>
+        `;
+      });
+    }
+  }
+
+  function render24hTimeline() {
+    const timelineGrid = document.getElementById('timeline-grid-display');
+    timelineGrid.innerHTML = '';
+
+    const targetDateStr = statsViewDate.toLocaleDateString('es-AR');
+    const dayLogs = logs.filter(l => {
+      const d = new Date(l.slotStart || l.timestamp);
+      return d.toLocaleDateString('es-AR') === targetDateStr;
+    });
+
+    const slotMap = {};
+    dayLogs.forEach(l => {
+      const hour = new Date(l.slotStart || l.timestamp).getHours();
+      slotMap[hour] = l.category;
+    });
+
+    const categoryColors = {
+      'Enfoque Profundo': 'var(--green)',
+      'Mantenimiento': 'var(--yellow)',
+      'Ocio Consciente': 'var(--cyan)',
+      'Fuga de Tiempo': 'var(--pink)',
+      'Sueño': 'var(--purple)'
+    };
+
+    for (let h = 0; h < 24; h++) {
+      const block = document.createElement('div');
+      block.className = 'timeline-block';
+      const cat = slotMap[h];
+      block.style.background = cat ? (categoryColors[cat] || 'var(--gray)') : 'var(--gray)';
+      block.title = `${h}:00 hs - ${cat || 'Sin registrar'}`;
+      timelineGrid.appendChild(block);
+    }
+  }
+
+  function renderInsights(focusMap, wasteMap) {
+    let peakFocusHour = -1;
+    let maxFocusVal = 0;
+    let peakWasteHour = -1;
+    let maxWasteVal = 0;
+
+    for (let h = 0; h < 24; h++) {
+      if (focusMap[h] > maxFocusVal) {
+        maxFocusVal = focusMap[h];
+        peakFocusHour = h;
+      }
+      if (wasteMap[h] > maxWasteVal) {
+        maxWasteVal = wasteMap[h];
+        peakWasteHour = h;
+      }
+    }
+
+    const t1 = document.getElementById('insight-text-1');
+    const t2 = document.getElementById('insight-text-2');
+
+    if (peakFocusHour !== -1) {
+      t1.innerText = `• Franja de oro: Mayor Enfoque entre las ${peakFocusHour}:00 y las ${peakFocusHour + 1}:00 hs.`;
+    } else {
+      t1.innerText = `• Franja de oro: Sin suficientes registros de Enfoque.`;
+    }
+
+    if (peakWasteHour !== -1) {
+      t2.innerText = `• Pico crítico de Fuga: Mayor distracción entre las ${peakWasteHour}:00 y las ${peakWasteHour + 1}:00 hs.`;
+    } else {
+      t2.innerText = `• Pico de Fuga: Sin registros de distracción detectados.`;
+    }
+  }
+
+  function renderWeeklyChart() {
+    const container = document.getElementById('weekly-chart-display');
+    container.innerHTML = '';
+
+    const dayLabels = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
+    const focusByDay = new Array(7).fill(0);
+
+    const now = new Date(statsViewDate);
+    const endMs = new Date(now).setHours(23, 59, 59, 999);
+    const startMs = endMs - (7 * 24 * 3600 * 1000);
+
+    logs.forEach(l => {
+      const ts = l.slotStart || l.timestamp;
+      if (ts >= startMs && ts <= endMs && l.category === 'Enfoque Profundo') {
+        const dayIdx = new Date(ts).getDay();
+        focusByDay[dayIdx] += (intervalMinutes / 60);
+      }
+    });
+
+    const maxVal = Math.max(...focusByDay, 4.0); // Escalado dinámico
+
+    for (let i = 0; i < 7; i++) {
+      const col = document.createElement('div');
+      col.className = 'weekly-bar-col';
+
+      const heightPct = Math.round((focusByDay[i] / maxVal) * 100);
+
+      col.innerHTML = `
+        <div style="font-size: 8px; font-weight: 900;">${focusByDay[i] > 0 ? focusByDay[i].toFixed(1) : ''}</div>
+        <div class="weekly-bar-fill" style="height: ${heightPct}%;"></div>
+        <div class="weekly-bar-label">${dayLabels[i]}</div>
+      `;
+      container.appendChild(col);
+    }
+  }
+
+  // OLVIDOS Y LOTE
   function renderBatchList() {
     const pendingSlots = getUnloggedCompletedSlots();
     const container = document.getElementById('batch-list');
@@ -725,54 +1218,6 @@
     }
   }
 
-  function renderStats() {
-    const container = document.getElementById('cpu-bar-display');
-    container.innerHTML = '';
-
-    let focusCount = 0;
-    let wasteCount = 0;
-    const totals = {};
-
-    logs.forEach(l => {
-      totals[l.category] = (totals[l.category] || 0) + 1;
-      if (l.category === 'Enfoque Profundo') focusCount++;
-      if (l.category === 'Fuga de Tiempo') wasteCount++;
-    });
-
-    const totalRated = focusCount + wasteCount;
-    const focusPct = totalRated > 0 ? Math.round((focusCount / totalRated) * 100) : 0;
-    const wastePct = totalRated > 0 ? Math.round((wasteCount / totalRated) * 100) : 0;
-
-    document.getElementById('ratio-focus-text').innerText = `ENFOQUE: ${focusPct}%`;
-    document.getElementById('ratio-waste-text').innerText = `FUGA: ${wastePct}%`;
-
-    for (let i = 0; i < 10; i++) {
-      const seg = document.createElement('div');
-      seg.className = 'cpu-segment';
-      if (i < Math.round(focusPct / 10)) seg.classList.add('active-focus');
-      else if (i >= 10 - Math.round(wastePct / 10)) seg.classList.add('active-waste');
-      container.appendChild(seg);
-    }
-
-    const hoursList = document.getElementById('summary-hours-list');
-    hoursList.innerHTML = '';
-    Object.keys(totals).forEach(cat => {
-      const hrs = ((totals[cat] * intervalMinutes) / 60).toFixed(1);
-      hoursList.innerHTML += `<div><strong>${cat}:</strong> ${hrs} hs (${totals[cat]} bloques)</div>`;
-    });
-
-    const historyContainer = document.getElementById('history-log-container');
-    historyContainer.innerHTML = '';
-    logs.slice(-15).reverse().forEach(l => {
-      historyContainer.innerHTML += `
-        <div class="log-row">
-          <span><strong>${l.category}</strong> (${l.note})</span>
-          <span style="font-size: 10px;">${l.datetime.split(' ')[1] || ''}</span>
-        </div>
-      `;
-    });
-  }
-
   function updateIntervalSetting() {
     intervalMinutes = parseInt(document.getElementById('config-interval-select').value);
     localStorage.setItem('pixel_audit_interval', intervalMinutes);
@@ -809,6 +1254,7 @@
     if (confirm('⚠️ ¿Estás seguro de borrar todo el historial?')) {
       logs = [];
       localStorage.removeItem('pixel_audit_logs');
+      localStorage.removeItem('pixel_audit_init_time');
       updateUI();
       alert('Historial borrado.');
     }
