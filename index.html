@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>PIXEL_AUDIT v3.0 - Advanced Metrics</title>
+  <title>PIXEL_AUDIT v3.1 - Gamified</title>
   
   <link rel="manifest" href='data:application/manifest+json,{"name":"PIXEL_AUDIT","short_name":"Audit","start_url":".","display":"standalone","background_color":"#00F0FF","theme_color":"#FFDE59","icons":[{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
   
@@ -26,7 +26,6 @@
       --purple: #B55FE6;
       --orange: #FF914D;
       --gray: #E0E0E0;
-      --dark-gray: #333333;
     }
 
     * {
@@ -49,6 +48,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      position: relative;
     }
 
     .container {
@@ -63,14 +63,29 @@
       padding: 12px;
       margin-bottom: 12px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
 
     h1 {
       font-family: 'Press Start 2P', cursive;
       font-size: 14px;
-      line-height: 1.3;
+      line-height: 1.2;
       text-transform: uppercase;
       letter-spacing: -1px;
+    }
+
+    .score-badge {
+      background: #000;
+      color: var(--yellow);
+      font-family: 'Press Start 2P', cursive;
+      font-size: 11px;
+      padding: 6px 12px;
+      border: 2px solid #000;
+      box-shadow: 2px 2px 0px #FFF;
+      display: inline-block;
     }
 
     .nav-tabs {
@@ -176,13 +191,24 @@
 
     .grid-punch .btn {
       flex-direction: column;
-      height: 80px;
-      font-size: 13px;
+      height: 85px;
+      font-size: 12px;
       text-align: center;
+      position: relative;
     }
 
-    .grid-punch .btn span {
-      font-size: 24px;
+    .grid-punch .btn span.emoji {
+      font-size: 22px;
+    }
+
+    .pts-tag {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 8px;
+      background: #000;
+      color: #FFF;
+      padding: 2px 4px;
+      border-radius: 3px;
+      margin-top: 2px;
     }
 
     input, select {
@@ -251,7 +277,7 @@
       margin-bottom: 10px;
     }
 
-    /* ESTILOS ESPECÍFICOS DEL DASHBOARD DE MÉTRICAS Avanzado */
+    /* DASHBOARD MÉTRICAS */
     .date-nav-bar {
       display: flex;
       align-items: center;
@@ -305,7 +331,7 @@
 
     .kpi-value {
       font-family: 'Press Start 2P', cursive;
-      font-size: 15px;
+      font-size: 14px;
       color: #000;
     }
 
@@ -453,13 +479,36 @@
       width: 0%;
       transition: width 0.3s;
     }
+
+    /* TOAST DE PUNTOS OVERLAY */
+    #points-toast {
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-family: 'Press Start 2P', cursive;
+      font-size: 20px;
+      padding: 16px 24px;
+      border: var(--border);
+      box-shadow: 6px 6px 0px #000;
+      z-index: 9999;
+      pointer-events: none;
+      transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    #points-toast.show {
+      transform: translate(-50%, -50%) scale(1);
+    }
   </style>
 </head>
 <body>
 
+<div id="points-toast">+0 PTS</div>
+
 <div class="container">
   <header>
-    <h1>⏱️ PIXEL_AUDIT v3.0</h1>
+    <h1>⏱️ PIXEL_AUDIT v3.1</h1>
+    <div class="score-badge" id="header-score-badge">🏆 0 PTS</div>
   </header>
 
   <div class="nav-tabs">
@@ -487,19 +536,24 @@
       <div style="font-weight: 900; font-size: 13px; margin-top: 6px; margin-bottom: 6px;">¿QUÉ HICISTE EN ESTE BLOQUE?</div>
       <div class="grid-punch">
         <button class="btn btn-green punch-btn" onclick="punchCategory('Enfoque Profundo')">
-          <span>🧠</span> ENFOQUE
+          <span class="emoji">🧠</span> ENFOQUE
+          <span class="pts-tag" style="color: var(--green);">+4 PTS</span>
         </button>
         <button class="btn btn-yellow punch-btn" onclick="punchCategory('Mantenimiento')">
-          <span>🧹</span> LOGÍSTICA
+          <span class="emoji">🧹</span> LOGÍSTICA
+          <span class="pts-tag">0 PTS</span>
         </button>
         <button class="btn btn-cyan punch-btn" onclick="punchCategory('Ocio Consciente')">
-          <span>🎮</span> OCIO
+          <span class="emoji">🎮</span> OCIO
+          <span class="pts-tag" style="color: var(--pink);">-1 PTS</span>
         </button>
         <button class="btn btn-pink punch-btn" onclick="punchCategory('Fuga de Tiempo')">
-          <span>🔥</span> FUGA
+          <span class="emoji">🔥</span> FUGA
+          <span class="pts-tag" style="color: var(--pink);">-3 PTS</span>
         </button>
-        <button class="btn btn-purple punch-btn" style="grid-column: span 2; height: 60px;" onclick="punchCategory('Sueño')">
-          <span style="font-size: 18px;">🛌 SUEÑO / DESCANSO</span>
+        <button class="btn btn-purple punch-btn" style="grid-column: span 2; height: 65px;" onclick="punchCategory('Sueño')">
+          <span style="font-size: 16px;">🛌 SUEÑO / DESCANSO</span>
+          <span class="pts-tag">0 PTS</span>
         </button>
       </div>
     </div>
@@ -528,18 +582,18 @@
     <div class="card" style="background: var(--cyan);">
       <label style="font-weight: 900; font-size: 12px;">ASIGNAR ACTIVIDAD A LOS SELECCIONADOS:</label>
       <select id="batch-category">
-        <option value="Enfoque Profundo">🧠 Enfoque Profundo</option>
-        <option value="Mantenimiento">🧹 Mantenimiento / Rutina</option>
-        <option value="Ocio Consciente">🎮 Ocio Consciente</option>
-        <option value="Fuga de Tiempo">🔥 Fuga de Tiempo</option>
-        <option value="Sueño">🛌 Sueño / Descanso</option>
+        <option value="Enfoque Profundo">🧠 Enfoque Profundo (+4 pts/bloque)</option>
+        <option value="Mantenimiento">🧹 Mantenimiento / Rutina (0 pts)</option>
+        <option value="Ocio Consciente">🎮 Ocio Consciente (-1 pt/bloque)</option>
+        <option value="Fuga de Tiempo">🔥 Fuga de Tiempo (-3 pts/bloque)</option>
+        <option value="Sueño">🛌 Sueño / Descanso (0 pts)</option>
       </select>
       <input type="text" id="batch-note" placeholder="Nota opcional para el lote">
       <button class="btn btn-green" onclick="saveBatchLogs()">GUARDAR BLOQUES SELECCIONADOS</button>
     </div>
   </div>
 
-  <!-- PESTAÑA 3: MÉTRICAS AVANZADAS (DASHBOARD COMPLETO) -->
+  <!-- PESTAÑA 3: MÉTRICAS AVANZADAS -->
   <div id="tab-stats" class="tab-content">
     
     <!-- Navegador de Fechas -->
@@ -560,6 +614,11 @@
     <!-- KPIs Principales -->
     <div class="kpi-grid">
       <div class="kpi-card">
+        <div class="kpi-title">PUNTAJE</div>
+        <div class="kpi-value" id="kpi-points-total" style="color: #000;">0 PTS</div>
+        <div class="kpi-subtext">Acumulado Rango</div>
+      </div>
+      <div class="kpi-card">
         <div class="kpi-title">EFICIENCIA</div>
         <div class="kpi-value" id="kpi-efficiency">0%</div>
         <div class="kpi-subtext" id="kpi-efficiency-sub">Foco vs Fuga</div>
@@ -568,11 +627,6 @@
         <div class="kpi-title">HORAS ENFOQUE</div>
         <div class="kpi-value" id="kpi-focus-hours">0.0h</div>
         <div class="kpi-subtext" id="kpi-focus-sub">Tiempo Útil</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">COBERTURA</div>
-        <div class="kpi-value" id="kpi-coverage">0%</div>
-        <div class="kpi-subtext" id="kpi-coverage-sub">Día Auditado</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-title">HORAS FUGA</div>
@@ -592,13 +646,11 @@
       </div>
     </div>
 
-    <!-- Mapa Visual del Día (24 Horas) -->
+    <!-- Mapa Visual del Día (Se muestra únicamente en la vista DÍA) -->
     <div class="card" id="timeline-card-section">
       <div style="font-weight: 900; font-size: 11px; margin-bottom: 6px;">🗺️ MAPA DE 24 HORAS DEL DÍA:</div>
       <div class="timeline-container">
-        <div class="timeline-grid" id="timeline-grid-display">
-          <!-- 24 bloques generados por JS -->
-        </div>
+        <div class="timeline-grid" id="timeline-grid-display"></div>
         <div class="timeline-labels">
           <span>00:00</span>
           <span>06:00</span>
@@ -608,11 +660,11 @@
         </div>
       </div>
       <div class="cat-legend">
-        <span><span class="cat-dot" style="background: var(--green);"></span> Enfoque</span>
-        <span><span class="cat-dot" style="background: var(--yellow);"></span> Logística</span>
-        <span><span class="cat-dot" style="background: var(--cyan);"></span> Ocio</span>
-        <span><span class="cat-dot" style="background: var(--pink);"></span> Fuga</span>
-        <span><span class="cat-dot" style="background: var(--purple);"></span> Sueño</span>
+        <span><span class="cat-dot" style="background: var(--green);"></span> Enfoque (+4)</span>
+        <span><span class="cat-dot" style="background: var(--yellow);"></span> Logística (0)</span>
+        <span><span class="cat-dot" style="background: var(--cyan);"></span> Ocio (-1)</span>
+        <span><span class="cat-dot" style="background: var(--pink);"></span> Fuga (-3)</span>
+        <span><span class="cat-dot" style="background: var(--purple);"></span> Sueño (0)</span>
         <span><span class="cat-dot" style="background: var(--gray);"></span> Vacío</span>
       </div>
     </div>
@@ -627,9 +679,7 @@
     <!-- Gráfico Comparativo Semanal -->
     <div class="card" id="weekly-card-section">
       <div style="font-weight: 900; font-size: 11px;">📊 ENFOQUE POR DÍA DE LA SEMANA (HS):</div>
-      <div class="weekly-chart-grid" id="weekly-chart-display">
-        <!-- 7 Columnas generadas por JS -->
-      </div>
+      <div class="weekly-chart-grid" id="weekly-chart-display"></div>
     </div>
 
     <!-- Desglose por Categorías -->
@@ -691,11 +741,24 @@
   let swRegistration = null;
   let activeTargetSlot = null;
 
-  // Estado para el navegador de métricas
   let statsViewDate = new Date();
-  let statsRangeMode = 'day'; // 'day', 'week', 'all'
+  let statsRangeMode = 'day';
 
-  const DAILY_TARGET_FOCUS_HOURS = 4.0; // Meta diaria configurable en horas
+  const DAILY_TARGET_FOCUS_HOURS = 4.0;
+
+  // Lógica de Puntos por Categoría
+  function getPointsForCategory(cat) {
+    if (cat === 'Enfoque Profundo') return 4;
+    if (cat === 'Mantenimiento') return 0;
+    if (cat === 'Ocio Consciente') return -1;
+    if (cat === 'Fuga de Tiempo') return -3;
+    if (cat === 'Sueño') return 0;
+    return 0;
+  }
+
+  function calculateTotalScore(logArray) {
+    return (logArray || logs).reduce((acc, l) => acc + getPointsForCategory(l.category), 0);
+  }
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
@@ -758,6 +821,10 @@
 
   function updateUI() {
     document.getElementById('current-interval-label').innerText = `INT: ${intervalMinutes} MIN`;
+    
+    // Actualizar Badge global de puntos
+    const totalPts = calculateTotalScore(logs);
+    document.getElementById('header-score-badge').innerText = `🏆 ${totalPts} PTS`;
 
     const unloggedSlots = getUnloggedCompletedSlots();
     const statusBox = document.getElementById('slot-status-box');
@@ -797,6 +864,9 @@
     if (!activeTargetSlot) return;
     vibrate();
 
+    const ptsDelta = getPointsForCategory(category);
+    triggerScoreFeedback(ptsDelta);
+
     const note = document.getElementById('quick-note').value.trim();
     const d = new Date(activeTargetSlot);
 
@@ -811,6 +881,88 @@
     localStorage.setItem('pixel_audit_logs', JSON.stringify(logs));
     document.getElementById('quick-note').value = '';
     updateUI();
+  }
+
+  // SINTETIZADOR DE AUDIO Y FEEDBACK VISUAL DE PUNTOS
+  function triggerScoreFeedback(ptsDelta) {
+    const toast = document.getElementById('points-toast');
+    
+    if (ptsDelta > 0) {
+      toast.innerText = `+${ptsDelta} PTS! 🎉`;
+      toast.style.background = 'var(--green)';
+      toast.style.color = '#000';
+      playVictorySound();
+    } else if (ptsDelta < 0) {
+      toast.innerText = `${ptsDelta} PTS! 🔥`;
+      toast.style.background = 'var(--pink)';
+      toast.style.color = '#FFF';
+      playDefeatSound();
+    } else {
+      toast.innerText = `+0 PTS 🧹`;
+      toast.style.background = 'var(--yellow)';
+      toast.style.color = '#000';
+      playNeutralSound();
+    }
+
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1200);
+  }
+
+  function playVictorySound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const notes = [261.63, 329.63, 392.00, 523.25, 659.25]; // Arpegio Do Mayor
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.12, ctx.currentTime + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (idx + 1) * 0.08);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + idx * 0.08);
+        osc.stop(ctx.currentTime + (idx + 1) * 0.08);
+      });
+    } catch (e) {}
+  }
+
+  function playDefeatSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const notes = [220.00, 196.00, 174.61, 130.81]; // Tono descendente grave
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (idx + 1) * 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + idx * 0.1);
+        osc.stop(ctx.currentTime + (idx + 1) * 0.12);
+      });
+    } catch (e) {}
+  }
+
+  function playNeutralSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = 440;
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.08);
+    } catch (e) {}
   }
 
   let lastNotifiedSlot = null;
@@ -841,33 +993,14 @@
   function requestNotificationPerms() {
     if ('Notification' in window) {
       Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          alert('🔔 Notificaciones permitidas.');
-        } else {
-          alert('⚠️ Permiso denegado.');
-        }
+        if (permission === 'granted') alert('🔔 Notificaciones permitidas.');
+        else alert('⚠️ Permiso denegado.');
       });
     }
   }
 
   function playChiptuneAlarm() {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioCtx();
-      const notes = [261.63, 329.63, 392.00, 523.25];
-      notes.forEach((freq, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0.1, ctx.currentTime + idx * 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (idx + 1) * 0.1);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(ctx.currentTime + idx * 0.1);
-        osc.stop(ctx.currentTime + (idx + 1) * 0.1);
-      });
-    } catch (e) {}
+    playVictorySound();
   }
 
   function switchTab(tabId) {
@@ -882,7 +1015,7 @@
     if (tabId === 'stats') renderStats();
   }
 
-  // --- LÓGICA DEL DASHBOARD DE MÉTRICAS AVANZADO ---
+  // --- LÓGICA DE DASHBOARD DE MÉTRICAS ---
 
   function shiftStatsDate(deltaDays) {
     vibrate();
@@ -927,19 +1060,24 @@
       });
     }
 
-    return logs; // 'all'
+    return logs;
   }
 
   function renderStats() {
     const isToday = statsViewDate.toLocaleDateString('es-AR') === new Date().toLocaleDateString('es-AR');
     const dateDisplay = document.getElementById('stats-date-display');
-    
+    const timelineSection = document.getElementById('timeline-card-section');
+
+    // Adaptación visual según el rango seleccionado
     if (statsRangeMode === 'day') {
       dateDisplay.innerText = isToday ? `HOY (${statsViewDate.toLocaleDateString('es-AR')})` : statsViewDate.toLocaleDateString('es-AR');
+      timelineSection.style.display = 'block'; // Mostrar mapa de 24hs solo en vista por Día
     } else if (statsRangeMode === 'week') {
       dateDisplay.innerText = `ÚLTIMOS 7 DÍAS`;
+      timelineSection.style.display = 'none'; // Ocultar mapa de 24hs en vistas de rango extendido
     } else {
       dateDisplay.innerText = `HISTÓRICO COMPLETO`;
+      timelineSection.style.display = 'none';
     }
 
     const filtered = getFilteredLogs();
@@ -947,10 +1085,6 @@
     // KPIs
     let focusBlocks = 0;
     let wasteBlocks = 0;
-    let maintentanceBlocks = 0;
-    let leisureBlocks = 0;
-    let sleepBlocks = 0;
-
     const totals = {};
     const hourlyFocusMap = new Array(24).fill(0);
     const hourlyWasteMap = new Array(24).fill(0);
@@ -965,37 +1099,30 @@
       } else if (l.category === 'Fuga de Tiempo') {
         wasteBlocks++;
         hourlyWasteMap[hour]++;
-      } else if (l.category === 'Mantenimiento') maintentanceBlocks++;
-      else if (l.category === 'Ocio Consciente') leisureBlocks++;
-      else if (l.category === 'Sueño') sleepBlocks++;
+      }
     });
 
+    const rangeScore = calculateTotalScore(filtered);
     const focusHours = (focusBlocks * intervalMinutes) / 60;
     const wasteHours = (wasteBlocks * intervalMinutes) / 60;
     const totalRated = focusBlocks + wasteBlocks;
     const efficiency = totalRated > 0 ? Math.round((focusBlocks / totalRated) * 100) : 0;
 
-    // Cobertura del día (96 bloques de 15 min en 24h)
-    const blocksInDay = (24 * 60) / intervalMinutes;
-    const coverage = statsRangeMode === 'day' ? Math.min(100, Math.round((filtered.length / blocksInDay) * 100)) : 100;
-
+    document.getElementById('kpi-points-total').innerText = `${rangeScore} PTS`;
     document.getElementById('kpi-efficiency').innerText = `${efficiency}%`;
     document.getElementById('kpi-focus-hours').innerText = `${focusHours.toFixed(1)}h`;
     document.getElementById('kpi-waste-hours').innerText = `${wasteHours.toFixed(1)}h`;
-    document.getElementById('kpi-coverage').innerText = `${coverage}%`;
 
     // Meta Diaria Progress Bar
     const targetPct = Math.min(100, Math.round((focusHours / DAILY_TARGET_FOCUS_HOURS) * 100));
     document.getElementById('target-progress-text').innerText = `${targetPct}%`;
     document.getElementById('target-progress-bar').style.width = `${targetPct}%`;
 
-    // Render 24H Timeline Grid
-    render24hTimeline();
+    if (statsRangeMode === 'day') {
+      render24hTimeline();
+    }
 
-    // Render Insights
     renderInsights(hourlyFocusMap, hourlyWasteMap);
-
-    // Render Weekly Chart
     renderWeeklyChart();
 
     // Desglose de horas
@@ -1006,7 +1133,8 @@
     } else {
       Object.keys(totals).forEach(cat => {
         const hrs = ((totals[cat] * intervalMinutes) / 60).toFixed(1);
-        hoursList.innerHTML += `<div>• <strong>${cat}:</strong> ${hrs} hs (${totals[cat]} bloques)</div>`;
+        const pts = totals[cat] * getPointsForCategory(cat);
+        hoursList.innerHTML += `<div>• <strong>${cat}:</strong> ${hrs} hs (${totals[cat]} bloques) $\rightarrow$ <strong>${pts >= 0 ? '+' : ''}${pts} pts</strong></div>`;
       });
     }
 
@@ -1017,10 +1145,11 @@
       historyContainer.innerHTML = '<div style="padding:10px; text-align:center;">No hay registros.</div>';
     } else {
       filtered.slice(-20).reverse().forEach(l => {
+        const pts = getPointsForCategory(l.category);
         historyContainer.innerHTML += `
           <div class="log-row">
             <span><strong>${l.category}</strong> (${l.note})</span>
-            <span style="font-size: 10px;">${l.datetime.split(' ')[1] || ''}</span>
+            <span style="font-size: 10px; font-weight:900;">${pts >= 0 ? '+' : ''}${pts} pts</span>
           </div>
         `;
       });
@@ -1081,17 +1210,13 @@
     const t1 = document.getElementById('insight-text-1');
     const t2 = document.getElementById('insight-text-2');
 
-    if (peakFocusHour !== -1) {
-      t1.innerText = `• Franja de oro: Mayor Enfoque entre las ${peakFocusHour}:00 y las ${peakFocusHour + 1}:00 hs.`;
-    } else {
-      t1.innerText = `• Franja de oro: Sin suficientes registros de Enfoque.`;
-    }
+    t1.innerText = peakFocusHour !== -1 
+      ? `• Franja de oro: Mayor Enfoque entre las ${peakFocusHour}:00 y las ${peakFocusHour + 1}:00 hs.`
+      : `• Franja de oro: Sin suficientes registros de Enfoque.`;
 
-    if (peakWasteHour !== -1) {
-      t2.innerText = `• Pico crítico de Fuga: Mayor distracción entre las ${peakWasteHour}:00 y las ${peakWasteHour + 1}:00 hs.`;
-    } else {
-      t2.innerText = `• Pico de Fuga: Sin registros de distracción detectados.`;
-    }
+    t2.innerText = peakWasteHour !== -1 
+      ? `• Pico crítico de Fuga: Mayor distracción entre las ${peakWasteHour}:00 y las ${peakWasteHour + 1}:00 hs.`
+      : `• Pico de Fuga: Sin registros de distracción detectados.`;
   }
 
   function renderWeeklyChart() {
@@ -1113,12 +1238,11 @@
       }
     });
 
-    const maxVal = Math.max(...focusByDay, 4.0); // Escalado dinámico
+    const maxVal = Math.max(...focusByDay, 4.0);
 
     for (let i = 0; i < 7; i++) {
       const col = document.createElement('div');
       col.className = 'weekly-bar-col';
-
       const heightPct = Math.round((focusByDay[i] / maxVal) * 100);
 
       col.innerHTML = `
@@ -1210,9 +1334,10 @@
     if (count > 0) {
       localStorage.setItem('pixel_audit_logs', JSON.stringify(logs));
       document.getElementById('batch-note').value = '';
+      const totalDelta = count * getPointsForCategory(category);
+      triggerScoreFeedback(totalDelta);
       renderBatchList();
       updateUI();
-      alert(`✅ Se completaron ${count} bloques pendientes.`);
     } else {
       alert('⚠️ Marcá al menos un bloque.');
     }
@@ -1230,9 +1355,9 @@
   }
 
   function exportDataCSV() {
-    let csv = 'Fecha_Hora,Categoria,Nota\n';
+    let csv = 'Fecha_Hora,Categoria,Nota,Puntos\n';
     logs.forEach(l => {
-      csv += `"${l.datetime}","${l.category}","${l.note}"\n`;
+      csv += `"${l.datetime}","${l.category}","${l.note}",${getPointsForCategory(l.category)}\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -1251,12 +1376,12 @@
   }
 
   function clearAllData() {
-    if (confirm('⚠️ ¿Estás seguro de borrar todo el historial?')) {
+    if (confirm('⚠️ ¿Estás seguro de borrar todo el historial y puntaje?')) {
       logs = [];
       localStorage.removeItem('pixel_audit_logs');
       localStorage.removeItem('pixel_audit_init_time');
       updateUI();
-      alert('Historial borrado.');
+      alert('Historial y puntos reiniciados.');
     }
   }
 </script>
