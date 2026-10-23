@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>PIXEL_AUDIT v3.1 - Gamified</title>
+  <title>PIXEL_AUDIT v3.2 - Score Graph</title>
   
   <link rel="manifest" href='data:application/manifest+json,{"name":"PIXEL_AUDIT","short_name":"Audit","start_url":".","display":"standalone","background_color":"#00F0FF","theme_color":"#FFDE59","icons":[{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱️</text></svg>","sizes":"192x192","type":"image/svg+xml"}]}'>
   
@@ -480,7 +480,6 @@
       transition: width 0.3s;
     }
 
-    /* TOAST DE PUNTOS OVERLAY */
     #points-toast {
       position: fixed;
       top: 20%;
@@ -507,7 +506,7 @@
 
 <div class="container">
   <header>
-    <h1>⏱️ PIXEL_AUDIT v3.1</h1>
+    <h1>⏱️ PIXEL_AUDIT v3.2</h1>
     <div class="score-badge" id="header-score-badge">🏆 0 PTS</div>
   </header>
 
@@ -646,6 +645,12 @@
       </div>
     </div>
 
+    <!-- Gráfico de Evolución del Puntaje -->
+    <div class="card" id="score-evolution-card-section">
+      <div style="font-weight: 900; font-size: 11px; margin-bottom: 6px;">📈 EVOLUCIÓN ACUMULADA DEL PUNTAJE:</div>
+      <div id="score-chart-display" style="width: 100%;"></div>
+    </div>
+
     <!-- Mapa Visual del Día (Se muestra únicamente en la vista DÍA) -->
     <div class="card" id="timeline-card-section">
       <div style="font-weight: 900; font-size: 11px; margin-bottom: 6px;">🗺️ MAPA DE 24 HORAS DEL DÍA:</div>
@@ -746,7 +751,6 @@
 
   const DAILY_TARGET_FOCUS_HOURS = 4.0;
 
-  // Lógica de Puntos por Categoría
   function getPointsForCategory(cat) {
     if (cat === 'Enfoque Profundo') return 4;
     if (cat === 'Mantenimiento') return 0;
@@ -822,7 +826,6 @@
   function updateUI() {
     document.getElementById('current-interval-label').innerText = `INT: ${intervalMinutes} MIN`;
     
-    // Actualizar Badge global de puntos
     const totalPts = calculateTotalScore(logs);
     document.getElementById('header-score-badge').innerText = `🏆 ${totalPts} PTS`;
 
@@ -883,7 +886,6 @@
     updateUI();
   }
 
-  // SINTETIZADOR DE AUDIO Y FEEDBACK VISUAL DE PUNTOS
   function triggerScoreFeedback(ptsDelta) {
     const toast = document.getElementById('points-toast');
     
@@ -912,7 +914,7 @@
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       const ctx = new AudioCtx();
-      const notes = [261.63, 329.63, 392.00, 523.25, 659.25]; // Arpegio Do Mayor
+      const notes = [261.63, 329.63, 392.00, 523.25, 659.25];
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -932,7 +934,7 @@
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       const ctx = new AudioCtx();
-      const notes = [220.00, 196.00, 174.61, 130.81]; // Tono descendente grave
+      const notes = [220.00, 196.00, 174.61, 130.81];
       notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -1015,7 +1017,7 @@
     if (tabId === 'stats') renderStats();
   }
 
-  // --- LÓGICA DE DASHBOARD DE MÉTRICAS ---
+  // --- LÓGICA DE DASHBOARD DE MÉTRICAS AVANZADO ---
 
   function shiftStatsDate(deltaDays) {
     vibrate();
@@ -1068,13 +1070,12 @@
     const dateDisplay = document.getElementById('stats-date-display');
     const timelineSection = document.getElementById('timeline-card-section');
 
-    // Adaptación visual según el rango seleccionado
     if (statsRangeMode === 'day') {
       dateDisplay.innerText = isToday ? `HOY (${statsViewDate.toLocaleDateString('es-AR')})` : statsViewDate.toLocaleDateString('es-AR');
-      timelineSection.style.display = 'block'; // Mostrar mapa de 24hs solo en vista por Día
+      timelineSection.style.display = 'block';
     } else if (statsRangeMode === 'week') {
       dateDisplay.innerText = `ÚLTIMOS 7 DÍAS`;
-      timelineSection.style.display = 'none'; // Ocultar mapa de 24hs en vistas de rango extendido
+      timelineSection.style.display = 'none';
     } else {
       dateDisplay.innerText = `HISTÓRICO COMPLETO`;
       timelineSection.style.display = 'none';
@@ -1082,7 +1083,6 @@
 
     const filtered = getFilteredLogs();
 
-    // KPIs
     let focusBlocks = 0;
     let wasteBlocks = 0;
     const totals = {};
@@ -1113,10 +1113,12 @@
     document.getElementById('kpi-focus-hours').innerText = `${focusHours.toFixed(1)}h`;
     document.getElementById('kpi-waste-hours').innerText = `${wasteHours.toFixed(1)}h`;
 
-    // Meta Diaria Progress Bar
     const targetPct = Math.min(100, Math.round((focusHours / DAILY_TARGET_FOCUS_HOURS) * 100));
     document.getElementById('target-progress-text').innerText = `${targetPct}%`;
     document.getElementById('target-progress-bar').style.width = `${targetPct}%`;
+
+    // Renderizado del Gráfico de Evolución del Puntaje
+    renderScoreEvolutionChart(filtered);
 
     if (statsRangeMode === 'day') {
       render24hTimeline();
@@ -1125,7 +1127,6 @@
     renderInsights(hourlyFocusMap, hourlyWasteMap);
     renderWeeklyChart();
 
-    // Desglose de horas
     const hoursList = document.getElementById('summary-hours-list');
     hoursList.innerHTML = '';
     if (Object.keys(totals).length === 0) {
@@ -1138,7 +1139,6 @@
       });
     }
 
-    // Historial
     const historyContainer = document.getElementById('history-log-container');
     historyContainer.innerHTML = '';
     if (filtered.length === 0) {
@@ -1154,6 +1154,72 @@
         `;
       });
     }
+  }
+
+  // GENERADOR SVG DE EVOLUCIÓN ACUMULADA DEL PUNTAJE
+  function renderScoreEvolutionChart(filteredLogs) {
+    const container = document.getElementById('score-chart-display');
+    container.innerHTML = '';
+
+    if (filteredLogs.length === 0) {
+      container.innerHTML = '<div style="font-size:12px; font-weight:700; text-align:center; padding:15px;">Sin registros en este rango para graficar.</div>';
+      return;
+    }
+
+    // Ordenar cronológicamente
+    const sorted = [...filteredLogs].sort((a, b) => (a.slotStart || a.timestamp) - (b.slotStart || b.timestamp));
+
+    let runningScore = 0;
+    const pointsData = sorted.map(l => {
+      runningScore += getPointsForCategory(l.category);
+      return {
+        ts: l.slotStart || l.timestamp,
+        score: runningScore,
+        timeStr: formatTime(l.slotStart || l.timestamp)
+      };
+    });
+
+    const width = 380;
+    const height = 120;
+    const padding = 20;
+
+    const scoresArr = pointsData.map(p => p.score);
+    const minScore = Math.min(0, ...scoresArr);
+    const maxScore = Math.max(1, ...scoresArr);
+    const scoreRange = (maxScore - minScore) || 1;
+
+    const polylinePoints = pointsData.map((p, idx) => {
+      const x = padding + (idx / Math.max(1, pointsData.length - 1)) * (width - 2 * padding);
+      const y = height - padding - ((p.score - minScore) / scoreRange) * (height - 2 * padding);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+
+    let dotsHtml = '';
+    pointsData.forEach((p, idx) => {
+      const x = padding + (idx / Math.max(1, pointsData.length - 1)) * (width - 2 * padding);
+      const y = height - padding - ((p.score - minScore) / scoreRange) * (height - 2 * padding);
+      const color = p.score >= 0 ? 'var(--green)' : 'var(--pink)';
+      dotsHtml += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${color}" stroke="#000" stroke-width="2"><title>${p.timeStr}: ${p.score} pts</title></circle>`;
+    });
+
+    // Línea del eje 0
+    const zeroY = height - padding - ((0 - minScore) / scoreRange) * (height - 2 * padding);
+    const zeroLineHtml = `<line x1="${padding}" y1="${zeroY.toFixed(1)}" x2="${width - padding}" y2="${zeroY.toFixed(1)}" stroke="#888" stroke-dasharray="3,3" stroke-width="2"/>`;
+
+    const svgHtml = `
+      <svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: 130px; background: #FFF; border: var(--border); overflow: visible;">
+        ${zeroLineHtml}
+        <polyline fill="none" stroke="#000" stroke-width="3" points="${polylinePoints}" />
+        ${dotsHtml}
+      </svg>
+      <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:900; margin-top:4px;">
+        <span>INICIO: ${pointsData[0].score} PTS</span>
+        <span>MÁX: ${maxScore} PTS</span>
+        <span>ACTUAL: ${runningScore} PTS</span>
+      </div>
+    `;
+
+    container.innerHTML = svgHtml;
   }
 
   function render24hTimeline() {
